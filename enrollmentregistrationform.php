@@ -1,3 +1,5 @@
+
+
 <?php
 	//if (!isset($SESSION['TARGETDIR'])){
 	//	session_start();
@@ -14,37 +16,9 @@
         $profile    = mysqli_fetch_array($getprofile);
     }
 
-    $qryreg = "SELECT `reg`.`schlenrollprereg_regdate` `REG_DATE`,
-					  UPPER(CONCAT(`reg`.`schlenrollprereg_lname`, ', ', `reg`.`schlenrollprereg_fname` , ' ' , `reg`.`schlenrollprereg_mname`)) `NAME`,
-					  UPPER(`lvl`.`schlacadlvl_name`) `LVL_NAME`, 
-					  UPPER(`yrlvl`.`schlacadyrlvl_name`) `YRLVL_NAME`, 
-					  UPPER(`crse`.`schlacadcrse_code`) `CRSE_NAME`, 
-					  `reg`.`schlusr_id` `USER_ID`,
-					  `reg`.`schlenrollprereg_id` `VIEW`,
-					  `reg`.`schlenrollprereg_id` `PROCESS`, 
-					  `lvl`.`schlacadlvl_name` `level` 
-					FROM `school_enrollment_pre_registration` `reg`
-						LEFT JOIN `school_academic_level` `lvl`
-							ON `reg`.`acadlvl_id`=`lvl`.`schlacadlvl_id`
-						LEFT JOIN `school_academic_year_level` `yrlvl`
-							ON `reg`.`acadyrlvl_id`=`yrlvl`.`schlacadyrlvl_id`
-						LEFT JOIN `school_academic_course` `crse`
-							ON `reg`.`acadcrse_id`=`crse`.`schlacadcrse_id`
-						LEFT JOIN `school_users` `usr`
-							ON `reg`.`schlusr_id`=`usr`.`schlusr_id`
-							WHERE `reg`.`schlusr_id` "; 
-
-	$rsreg = $dbConn->query($qryreg);
-	$fetchDatareg = $rsreg->fetch_ALL(MYSQLI_ASSOC);
-	
-	$qryuser = "SELECT `schlusr_lname` `NAME`,
-				       `schlusr_id` `USER_ID`
-				FROM `school_users`
-					WHERE `schlusr_status` = 1 
-					AND `schlusr_isactive` = 1 ";
-	$rsuser = $dbConn->query($qryuser);
-	$fetchDatauser = $rsuser->fetch_ALL(MYSQLI_ASSOC);
-
+    	$get_acad_course  = mysqli_query($dbConn, "SELECT * FROM school_enrollment_pre_registration");
+    	$get_acad_lvl     = mysqli_query($dbConn, "SELECT * FROM school_enrollment_pre_registration");
+    	$get_acad_course  = mysqli_query($dbConn, "SELECT * FROM school_enrollment_pre_registration");
 
 ?>
 
@@ -107,7 +81,7 @@
 			<div class="col-md-3">
 				<p>Academic Level *</p>
 					<select id="academiclevel-list" class="form-control" required disabled>
-						<option> <?php echo $profile["acadlvl_id"];?> </option>
+						<option> <?php echo $fetchDatauser["acadlvl_id"];?> </option>
 					</select>
 			</div>
 			<div class="col-md-4">
@@ -206,14 +180,7 @@
 		  </div>
 		</div>
 		<br>
-		<?php
-			if (!isset($_SESSION["IS_INIALIZED"])) {
-		?>
-				<div id="registration-requirements"></div>
-		<?php
-			}
-		?>
-		
+
 		<div align="center" style="background-color: lightblue;"><h2>PRESENT ADDRESS</h2></div>
 		<div class="row">
 			<div class="col-md-6">
@@ -250,23 +217,26 @@
 			</div>
 		</div>
 		<br>
+
+		<!-- PERMANENT ADDRESS -->
+
 		<div align="center" style="background-color: lightblue;"><h2>PERMANENT ADDRESS</h2></div>
 		<div class="row">
 			<div class="col-md-6">
 				<p>Street Address</p>
-			<input type="text" id="present-streetaddress" name="present-streetaddress" placeholder="<?php echo $profile['schlenrollprereg_present_streetadd'];?>" class="form-control" maxlength="40" required disabled>
+			<input type="text" id="present-streetaddress" name="present-streetaddress" placeholder="<?php echo $profile['schlenrollprereg_permanent_streetadd'];?>" class="form-control" maxlength="40" required disabled>
 			</div>
 			<div class="col-md-3">
 				<p>Province</p>
 					<select id="present-province-list" name="present-province" class="form-control" required disabled>
-						<option><?php echo $profile["philarealocprov_present_id"];?> </option>
+						<option><?php echo $profile["philarealocprov_permanent_id"];?> </option>
 					</select>
 				
 			</div>
 			<div class="col-md-3">
 				<p>Municipality</p>
 					<select id="present-municipality-list" name="present-municipality" class="form-control" required disabled="">
-						<option><?php echo $profile["philarealocmun_present_id"];?> </option>
+						<option><?php echo $profile["philarealocmun_permanent_id"];?> </option>
 					</select>
 
 			</div>
@@ -276,61 +246,23 @@
 			<div class="col-md-3">
 				<p>Barangay</p>
 					<select id="present-barangay-list" name="present-barangay" class="form-control" required disabled="">
-						<option><?php echo $profile["philarealocbrgy_present_id"];?> </option>
+						<option><?php echo $profile["philarealocbrgy_permanent_id"];?> </option>
 					</select>
 			</div>
 			<div class="col-md-3">
 				<p>Zipcode</p>
-					<input type="text" id="present-zipcode" name="present-zipcode" placeholder="<?php echo $profile['schlenrollprereg_present_zipcode'];?>" class="form-control" maxlength="40" required disabled>
+					<input type="text" id="present-zipcode" name="present-zipcode" placeholder="<?php echo $profile['schlenrollprereg_permanent_zipcode'];?>" class="form-control" maxlength="40" required disabled>
 
 			</div>
 		</div>
 
-		<!-- PERMANT ADDRESS -->
 
-		<div class="row">
-			<div class="col-md-6">
-				<p>Street Address</p>
-			<input type="text" id="permanent-streetaddress" name="permanent-streetaddress" placeholder="<?php echo $profile['schlenrollprereg_permanent_streetadd'];?>" class="form-control" maxlength="40" required disabled>
-			</div>
-			<div class="col-md-3">
-				<p>Province</p>
-					<select id="permanent-province-list" name="permanent-province" class="form-control" required disabled>
-						<option><?php echo $profile["philarealocprov_present_id"];?> </option>
-					</select>
-				
-			</div>
-			<div class="col-md-3">
-				<p>Municipality</p>
-					<select id="permanent-municipality-list" name="permanent-municipality" class="form-control" required disabled="">
-						<option><?php echo $profile["philarealocmun_present_id"];?> </option>
-					</select>
-
-			</div>
-		</div>
-		<br>
-		<div class="row">
-			<div class="col-md-3">
-				<p>Barangay</p>
-					<select id="permanent-barangay-list" name="permanent-barangay" class="form-control" required disabled="">
-						<option><?php echo $profile["philarealocbrgy_present_id"];?> </option>
-					</select>
-			</div>
-			<div class="col-md-3">
-				<p>Zipcode</p>
-					<input type="text" id="permanent-zipcode" name="permanent-zipcode" placeholder="<?php echo $profile['schlenrollprereg_present_zipcode'];?>" class="form-control" maxlength="40" required disabled>
-
-			</div>
-		</div>
-			</div>
-			<div class="col-md-3">
-			</div>
 		</div>
 		<hr>
 		<div align="center">
 			<!--<button type="button" id="submit-registration" class="btn btn-primary" value="Save to database">Submit my Online Registration</button>-->
 			<!--<input type="button" id="submit-registration" name="submit-registration" class="btn btn-primary" value="Register Now" style = "font-size: 40;">-->
-			<input type="button" id="submit-registration" name="submit-registration" class="btn btn-primary" value="Register Now" style = "font-size: 40;">
+			<input type="button" id="submit-registration" name="submit-registration" class="btn btn-primary" value="Process" style = "font-size: 40;">
 			
 		</div>
 		<hr>
