@@ -6,23 +6,11 @@
 	//  $_SESSION['TARGETDIR'] = '../../UPLOADS/';
 	//} 
     include('controller/class/configuration/connection.php');
-
+    include('controller/student_view.php'); 
 	
-	if(isset($_GET['userid']))
-    {
-       	$userid = $_GET['userid'];
-        $getprofile = mysqli_query($dbConn, 
-        	"SELECT * FROM school_enrollment_pre_registration WHERE schlenrollprereg_id = '$userid'");
-        $profile    = mysqli_fetch_array($getprofile);
-    }
-
-    	$get_acad_course  = mysqli_query($dbConn, "SELECT * FROM school_enrollment_pre_registration");
-    	$get_acad_lvl     = mysqli_query($dbConn, "SELECT * FROM school_enrollment_pre_registration");
-    	$get_acad_course  = mysqli_query($dbConn, "SELECT * FROM school_enrollment_pre_registration");
-
 ?>
 
-<html>
+<html>	
 <head>
 <link href="tool/bootstrap-5.0.2/dist/css/bootstrap.min.css" rel="stylesheet"/>
 <script src="tool/bootstrap-5.0.2/dist/js/bootstrap.bundle.min.js"></script>
@@ -81,19 +69,19 @@
 			<div class="col-md-3">
 				<p>Academic Level *</p>
 					<select id="academiclevel-list" class="form-control" required disabled>
-						<option> <?php echo $fetchDatauser["acadlvl_id"];?> </option>
+						<option> <?php echo $acad_lvl['schlacadlvl_code']; ?> </option>
 					</select>
 			</div>
 			<div class="col-md-4">
 				<p>Academic Year Level *</p>
 					<select id="academicyearlevel-list" name="academic_year_level" class="form-control" required disabled>
-						<option><?php echo $profile["acadyrlvl_id"];?> </option>
+						<option><?php echo $acad_yrlvl["schlacadyrlvl_code"];?> </option>
 					</select>
 			</div>
 			<div class="col-md-5">
 				<p>Academic Strand/Program/Course *</p>
 					<select id="academiccourse-list" name="academic_course" class="form-control" required disabled>
-						<option><?php echo $profile["acadcrse_id"];?> </option>
+						<option><?php echo $acad_crse["schlacadcrse_name"];?> </option>
 					</select>
 			</div>
 		</div>
@@ -190,14 +178,14 @@
 			<div class="col-md-3">
 				<p>Province</p>
 					<select id="present-province-list" name="present-province" class="form-control" required disabled>
-						<option><?php echo $profile["philarealocprov_present_id"];?> </option>
+						<option><?php echo $pres_loc_prov["philarealocprov_name"];?> </option>
 					</select>
 				
 			</div>
 			<div class="col-md-3">
 				<p>Municipality</p>
 					<select id="present-municipality-list" name="present-municipality" class="form-control" required disabled="">
-						<option><?php echo $profile["philarealocmun_present_id"];?> </option>
+						<option><?php echo $pres_loc_mun["philarealocmun_name"];?> </option>
 					</select>
 
 			</div>
@@ -207,7 +195,7 @@
 			<div class="col-md-3">
 				<p>Barangay</p>
 					<select id="present-barangay-list" name="present-barangay" class="form-control" required disabled="">
-						<option><?php echo $profile["philarealocbrgy_present_id"];?> </option>
+						<option><?php echo $pres_loc_brgy["philarealocbrgy_name"];?> </option>
 					</select>
 			</div>
 			<div class="col-md-3">
@@ -224,19 +212,19 @@
 		<div class="row">
 			<div class="col-md-6">
 				<p>Street Address</p>
-			<input type="text" id="present-streetaddress" name="present-streetaddress" placeholder="<?php echo $profile['schlenrollprereg_permanent_streetadd'];?>" class="form-control" maxlength="40" required disabled>
+			<input type="text" id="permanent-streetaddress" name="permanent-streetaddress" placeholder="<?php echo $profile['schlenrollprereg_permanent_streetadd'];?>" class="form-control" maxlength="40" required disabled>
 			</div>
 			<div class="col-md-3">
 				<p>Province</p>
-					<select id="present-province-list" name="present-province" class="form-control" required disabled>
-						<option><?php echo $profile["philarealocprov_permanent_id"];?> </option>
+					<select id="permanent-province-list" name="permanent-province" class="form-control" required disabled>
+						<option><?php echo $perma_loc_prov["philarealocprov_name"];?> </option>
 					</select>
 				
 			</div>
 			<div class="col-md-3">
 				<p>Municipality</p>
-					<select id="present-municipality-list" name="present-municipality" class="form-control" required disabled="">
-						<option><?php echo $profile["philarealocmun_permanent_id"];?> </option>
+					<select id="permanent-municipality-list" name="permanent-municipality" class="form-control" required disabled="">
+						<option><?php echo $perma_loc_mun["philarealocmun_name"];?> </option>
 					</select>
 
 			</div>
@@ -245,13 +233,13 @@
 		<div class="row">
 			<div class="col-md-3">
 				<p>Barangay</p>
-					<select id="present-barangay-list" name="present-barangay" class="form-control" required disabled="">
-						<option><?php echo $profile["philarealocbrgy_permanent_id"];?> </option>
+					<select id="permanent-barangay-list" name="permanent-barangay" class="form-control" required disabled="">
+						<option><?php echo $perma_loc_brgy["philarealocbrgy_name"];?> </option>
 					</select>
 			</div>
 			<div class="col-md-3">
 				<p>Zipcode</p>
-					<input type="text" id="present-zipcode" name="present-zipcode" placeholder="<?php echo $profile['schlenrollprereg_permanent_zipcode'];?>" class="form-control" maxlength="40" required disabled>
+					<input type="text" id="permanent-zipcode" name="permanent-zipcode" placeholder="<?php echo $profile['schlenrollprereg_permanent_zipcode'];?>" class="form-control" maxlength="40" required disabled>
 
 			</div>
 		</div>
@@ -266,9 +254,6 @@
 			
 		</div>
 		<hr>
-		<input type="hidden" id="curdate" name="curdate" value="">
-		<input type="text" id="insertedid" name="insertedid" value="">
-		<br>
 	</form>
 </div>
 	<div class="container">
@@ -279,7 +264,8 @@
 		<div class="col-mg-3" align="center"><h5>First City Providential College, Inc.</h5></div>
 	  </div>
 	</div>
-	
+	<br>
+	<br>
 
 
 </body>
